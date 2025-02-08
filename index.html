@@ -11,6 +11,9 @@
             margin: 0;
             padding: 0;
             text-align: center;
+            min-height: 100vh;  /* حداقل ارتفاع صفحه 100% */
+            display: flex;
+            flex-direction: column;
         }
         header {
             background-color: #3498db;
@@ -34,11 +37,10 @@
         footer {
             background-color: #3498db;
             color: white;
-            padding: 5px;  /* کاهش ارتفاع فوتر */
-            position: fixed;
-            bottom: 0;
+            padding: 5px;
+            position: relative;
             width: 100%;
-            font-size: 12px;  /* اندازه فونت کوچک‌تر */
+            font-size: 12px;
         }
         #link {
             margin-top: 20px;
@@ -71,6 +73,10 @@
         .service-btn:hover {
             background-color: #219150;
         }
+        /* فضای اضافی در پایین صفحه */
+        .content {
+            margin-bottom: 20px;  /* فضای اضافی پایین صفحه */
+        }
     </style>
 </head>
 <body>
@@ -78,7 +84,7 @@
         <h1>لیست قیمت محصولات</h1>
     </header>
 
-    <div id="content">
+    <div id="content" class="content">
         <h2>قیمت‌های روز ۲۰ بهمن ۱۴۰۳</h2>
         <table>
             <tr>
