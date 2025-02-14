@@ -26,6 +26,7 @@
 <div id="editor">// Write your C code here</div>
 
 <button onclick="runCode()">Run Code</button>
+<button onclick="downloadCode()">Download Code</button>
 
 <div id="output"></div>
 
@@ -45,8 +46,8 @@
             script: code,
             language: "c",
             versionIndex: "0",
-            clientId: "your_client_id", // Replace with your JDoodle client ID
-            clientSecret: "your_client_secret" // Replace with your JDoodle client secret
+            clientId: "7986847913d620b3d382f2199ef5f974", // Your JDoodle client ID
+            clientSecret: "cc50ab0bd1598ee10fe34f3c7e7047ad0d7b3614e76ea0e977e6ad2020f8276c" // Your JDoodle client secret
         };
 
         fetch('https://api.jdoodle.com/execute', {
@@ -64,6 +65,16 @@
         .catch(error => {
             document.getElementById('output').innerText = 'Error: ' + error.message;
         });
+    }
+
+    // Function to download the code as a file
+    function downloadCode() {
+        var code = editor.getValue();
+        var blob = new Blob([code], { type: 'text/plain' });
+        var link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'eriscode.c'; // Set the download file name
+        link.click();
     }
 </script>
 
