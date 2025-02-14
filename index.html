@@ -93,28 +93,40 @@
     <script>
         const weightInMilligrams = 550;
         const weightInGrams = weightInMilligrams / 1000;
-        const apiUrl = "https://alanchand.com/api/price-free?type=gold";
+        const goldPriceUrl = "https://english.tgju.org/profile/geram18";
         let goldPrices = [];  // ذخیره قیمت‌های طلا برای رسم نمودار
 
+        // تابع برای گرفتن قیمت طلا از سایت tgju.org
         async function fetchGoldPrice() {
             try {
-                const response = await fetch(apiUrl);
-                const data = await response.json();
+                // انجام درخواست به سایت
+                const response = await fetch(goldPriceUrl);
+                const html = await response.text();
 
-                const pricePerGram = parseFloat(data.data.gold_price); // قیمت طلا از API
-                document.getElementById('pricePerGram').textContent = pricePerGram.toLocaleString();
-                document.getElementById('totalValue').textContent = (weightInGrams * pricePerGram).toLocaleString();
+                // استفاده از DOMParser برای استخراج اطلاعات از HTML
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, "text/html");
 
-                // ذخیره قیمت جدید در آرایه
-                goldPrices.push(pricePerGram);
+                // پیدا کردن قیمت طلا (در اینجا فرض می‌کنیم قیمت در div با کلاس .price-content است)
+                const priceElement = doc.querySelector(".price-content");
+                if (priceElement) {
+                    const pricePerGram = parseFloat(priceElement.textContent.replace(/[^0-9.-]+/g, "")); // حذف همه کاراکترهای غیرعددی
+                    document.getElementById('pricePerGram').textContent = pricePerGram.toLocaleString();
+                    document.getElementById('totalValue').textContent = (weightInGrams * pricePerGram).toLocaleString();
 
-                // حداکثر 30 روز اخیر را در نمودار نشان می‌دهیم
-                if (goldPrices.length > 30) {
-                    goldPrices.shift();  // حذف اولین قیمت وقتی بیشتر از 30 قیمت داریم
+                    // ذخیره قیمت جدید در آرایه
+                    goldPrices.push(pricePerGram);
+
+                    // حداکثر 30 روز اخیر را در نمودار نشان می‌دهیم
+                    if (goldPrices.length > 30) {
+                        goldPrices.shift();  // حذف اولین قیمت وقتی بیشتر از 30 قیمت داریم
+                    }
+
+                    // رسم نمودار
+                    renderChart(goldPrices);
+                } else {
+                    console.error('قیمت طلا یافت نشد');
                 }
-
-                // رسم نمودار
-                renderChart(goldPrices);
 
             } catch (error) {
                 console.error('❌ خطا در دریافت قیمت طلا:', error);
@@ -165,8 +177,11 @@
             });
         }
 
+        // ابتدا قیمت طلا را بارگذاری می‌کنیم
         fetchGoldPrice();
-        setInterval(fetchGoldPrice, 21600000); // بروزرسانی هر ۶ ساعت
+
+        // بروزرسانی قیمت هر ۳۰ ثانیه
+        setInterval(fetchGoldPrice, 30000); // بروزرسانی هر ۳۰ ثانیه
     </script>
 </body>
 </html>
