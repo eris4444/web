@@ -3,17 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Exchange</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Luxury Gold Fund</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            color: white;
+            max-width: 600px;
+            width: 90%;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        #pricePerGram, #totalValue {
+            font-weight: bold;
+            color: #fbc531;
+        }
+
+        .button {
+            background: #fbc531;
+            color: #333;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 15px;
+        }
+
+        .button:hover {
+            background: #ffde73;
+            transform: scale(1.05);
+        }
+
+        #chartContainer {
+            margin-top: 30px;
+            height: 300px;
+            width: 100%;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-    <div class="login-container">
-        <h2>ورود به حساب</h2>
-        <input type="text" id="username" placeholder="نام کاربری">
-        <input type="password" id="password" placeholder="رمز عبور">
-        <button onclick="login()">ورود</button>
-        <p>حساب ندارید؟ <a href="register.html">ثبت‌نام کنید</a></p>
+    <div class="container">
+        <h1>💎 صندوق طلای لاکچری 💎</h1>
+        <p>📦 موجودی: <span id="weight">۵۵۰</span> میلی‌گرم</p>
+        <p>💰 قیمت هر گرم طلا: <span id="pricePerGram">در حال دریافت...</span> تومان</p>
+        <p>💎 ارزش کل صندوق: <span id="totalValue">در حال محاسبه...</span> تومان</p>
+        <button class="button" onclick="fetchGoldPrice()">🔄 بروزرسانی قیمت</button>
+        
+        <div id="chartContainer">
+            <canvas id="goldChart"></canvas>
+        </div>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        const weightInMilligrams = 550;
+        const weightInGrams = weightInMilligrams / 1000;
+        const apiUrl = "https://api.navasan.tech/lastest/freeLMa4jj56vR44sJVdm0chgm4Q7Poc";
+        let goldPrices = [];  // ذخیره قیمت‌های طلا برای رسم نمودار
+
+        async function fetchGoldPrice() {
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                const pricePerGram = parseFloat(data.gold_18); // قیمت طلا ۱۸ عیار
+                document.getElementById('pricePerGram').textContent = pricePerGram.toLocaleString();
+                document.getElementById('totalValue').textContent = (weightInGrams * pricePerGram).toLocaleString();
+
+                // ذخیره قیمت جدید در آرایه
+                goldPrices.push(pricePerGram);
+
+                // حداکثر 30 روز اخیر را در نمودار نشان می‌دهیم
+                if (goldPrices.length > 30) {
+                    goldPrices.shift();  // حذف اولین قیمت وقتی بیشتر از 30 قیمت داریم
+                }
+
+                // رسم نمودار
+                renderChart(goldPrices);
+
+            } catch (error) {
+                console.error('❌ خطا در دریافت قیمت طلا:', error);
+                document.getElementById('pricePerGram').textContent = 'خطا در دریافت';
+                document.getElementById('totalValue').textContent = 'نامشخص';
+            }
+        }
+
+        function renderChart(prices) {
+            const ctx = document.getElementById('goldChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({ length: prices.length }, (_, i) => `${i + 1} روز قبل`),
+                    datasets: [{
+                        label: 'قیمت طلا (تومان)',
+                        data: prices,
+                        borderColor: '#fbc531',
+                        backgroundColor: 'rgba(251, 197, 49, 0.2)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) { return value.toLocaleString(); }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return tooltipItem.raw.toLocaleString() + ' تومان';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        fetchGoldPrice();
+        setInterval(fetchGoldPrice, 21600000); // بروزرسانی هر ۶ ساعت
+    </script>
 </body>
 </html>
