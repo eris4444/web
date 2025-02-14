@@ -93,7 +93,7 @@
     <script>
         const weightInMilligrams = 550;
         const weightInGrams = weightInMilligrams / 1000;
-        const apiUrl = "https://api.navasan.tech/latest/freeLMa4jj56vR44sJVdm0chgm4Q7Poc";
+        const apiUrl = "https://alanchand.com/api/price-free?type=gold";
         let goldPrices = [];  // ذخیره قیمت‌های طلا برای رسم نمودار
 
         async function fetchGoldPrice() {
@@ -101,7 +101,7 @@
                 const response = await fetch(apiUrl);
                 const data = await response.json();
 
-                const pricePerGram = parseFloat(data.gold_18); // قیمت طلا ۱۸ عیار
+                const pricePerGram = parseFloat(data.data.gold_price); // قیمت طلا از API
                 document.getElementById('pricePerGram').textContent = pricePerGram.toLocaleString();
                 document.getElementById('totalValue').textContent = (weightInGrams * pricePerGram).toLocaleString();
 
