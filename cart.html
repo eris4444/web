@@ -37,7 +37,15 @@
             <div class="cart-total">
                 <strong>جمع کل:</strong> <span id="cart-total">0 تومان</span>
             </div>
-            <button class="cta-button" onclick="alert('پرداخت انجام شد')">پرداخت</button>
+            
+            <form id="customer-info-form" class="customer-info-form">
+                <h3>اطلاعات مشتری</h3>
+                <input type="text" id="customer-name" name="name" placeholder="نام و نام خانوادگی" required>
+                <input type="tel" id="customer-phone" name="phone" placeholder="شماره تماس" required>
+                <input type="text" id="customer-postcode" name="postcode" placeholder="کد پستی" required>
+                <textarea id="customer-address" name="address" placeholder="آدرس دقیق" required></textarea>
+                <button type="submit" class="cta-button">ثبت سفارش و پرداخت</button>
+            </form>
         </section>
     </main>
 
