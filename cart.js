@@ -70,4 +70,66 @@ function displayCart() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', updateCartIcon);
+function sendToTelegram(message) {
+    const botToken = '6554434146:AAHNahL_2YGrlzmm-vvVwVikgf5mpheQoMk';
+    const chatId = '5619969053';
+    const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+    const data = {
+        chat_id: chatId,
+        text: message
+    };
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log('پیام با موفقیت ارسال شد');
+    })
+    .catch(error => {
+        console.error('خطا:', error);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateCartIcon();
+    displayCart();
+
+    const form = document.getElementById('customer-info-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('customer-name').value;
+            const phone = document.getElementById('customer-phone').value;
+            const postcode = document.getElementById('customer-postcode').value;
+            const address = document.getElementById('customer-address').value;
+
+            let message = `سفارش جدید:\n\n`;
+            message += `نام: ${name}\n`;
+            message += `شماره تماس: ${phone}\n`;
+            message += `کد پستی: ${postcode}\n`;
+            message += `آدرس: ${address}\n\n`;
+            message += `محصولات:\n`;
+
+            cart.forEach(item => {
+                message += `${item.name} - تعداد: ${item.quantity} - قیمت: ${item.price.toLocaleString()} تومان\n`;
+            });
+
+            const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            message += `\nجمع کل: ${total.toLocaleString()} تومان`;
+
+            sendToTelegram(message);
+
+            alert('سفارش شما با موفقیت ثبت شد. لطفاً منتظر تماس ما باشید.');
+            cart = [];
+            updateCart();
+            form.reset();
+        });
+    }
+});
