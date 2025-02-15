@@ -71,29 +71,39 @@ function displayCart() {
 }
 
 function sendToTelegram(message) {
-    const botToken = '6554434146:AAHNahL_2YGrlzmm-vvVwVikgf5mpheQoMk';
-    const chatId = '5619969053';
-    const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+    return new Promise((resolve, reject) => {
+        const botToken = '6554434146:AAHNahL_2YGrlzmm-vvVwVikgf5mpheQoMk';
+        const chatId = '5619969053';
+        const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
-    const data = {
-        chat_id: chatId,
-        text: message
-    };
+        const data = {
+            chat_id: chatId,
+            text: message
+        };
 
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(result => {
-        console.log('پیام با موفقیت ارسال شد');
-    })
-    .catch(error => {
-        console.error('خطا:', error);
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.ok) {
+                resolve();
+            } else {
+                reject(new Error('پیام ارسال نشد'));
+            }
+        })
+        .catch(error => {
+            reject(error);
+        });
     });
+}
+
+function checkInternetConnection() {
+    return navigator.onLine;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -102,8 +112,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const form = document.getElementById('customer-info-form');
     if (form) {
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
+
+            if (!checkInternetConnection()) {
+                alert('لطفاً اتصال اینترنت خود را بررسی کنید و دوباره تلاش کنید.');
+                return;
+            }
 
             const name = document.getElementById('customer-name').value;
             const phone = document.getElementById('customer-phone').value;
@@ -124,12 +139,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
             message += `\nجمع کل: ${total.toLocaleString()} تومان`;
 
-            sendToTelegram(message);
-
-            alert('سفارش شما با موفقیت ثبت شد. لطفاً منتظر تماس ما باشید.');
-            cart = [];
-            updateCart();
-            form.reset();
+            try {
+                await sendToTelegram(message);
+                alert('سفارش شما با موفقیت ثبت شد. لطفاً منتظر تماس ما باشید.');
+                cart = [];
+                updateCart();
+                form.reset();
+            } catch (error) {
+                console.error('خطا در ارسال پیام:', error);
+                alert('متأسفانه در ثبت سفارش مشکلی پیش آمد. لطفاً دوباره تلاش کنید.');
+            }
         });
     }
 });
