@@ -347,3 +347,27 @@ footer {
 .mb-2 {
     margin-bottom: 2rem;
 }
+
+/* Add this to the end of your existing styles.css file */
+
+.customer-info-form {
+    margin-top: 2rem;
+    display: grid;
+    gap: 1rem;
+}
+
+.customer-info-form input,
+.customer-info-form textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.customer-info-form textarea {
+    height: 100px;
+}
+
+.customer-info-form button {
+    justify-self: start;
+}
