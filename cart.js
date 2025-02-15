@@ -70,40 +70,49 @@ function displayCart() {
     }
 }
 
-function sendToTelegram(message) {
-    return new Promise((resolve, reject) => {
-        const botToken = '6554434146:AAHNahL_2YGrlzmm-vvVwVikgf5mpheQoMk';
-        const chatId = '5619969053';
-        const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+async function sendToTelegram(message) {
+    const botToken = '6554434146:AAHNahL_2YGrlzmm-vvVwVikgf5mpheQoMk';
+    const chatId = '5619969053';
+    const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
-        const data = {
-            chat_id: chatId,
-            text: message
-        };
+    const data = {
+        chat_id: chatId,
+        text: message
+    };
 
-        fetch(url, {
+    try {
+        const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(result => {
-            if (result.ok) {
-                resolve();
-            } else {
-                reject(new Error('پیام ارسال نشد'));
-            }
-        })
-        .catch(error => {
-            reject(error);
         });
-    });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        if (!result.ok) {
+            throw new Error('Telegram API returned an error');
+        }
+
+        return true;
+    } catch (error) {
+        console.error('Error sending message to Telegram:', error);
+        return false;
+    }
 }
 
-function checkInternetConnection() {
-    return navigator.onLine;
+async function checkTelegramConnection() {
+    try {
+        const response = await fetch('https://api.telegram.org', { method: 'HEAD', mode: 'no-cors' });
+        return true;
+    } catch (error) {
+        console.error('Error checking Telegram connection:', error);
+        return false;
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -115,8 +124,14 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            if (!checkInternetConnection()) {
-                alert('لطفاً اتصال اینترنت خود را بررسی کنید و دوباره تلاش کنید.');
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = 'در حال ارسال...';
+
+            if (!(await checkTelegramConnection())) {
+                alert('لطفاً اتصال اینترنت و فیلترشکن خود را بررسی کنید و دوباره تلاش کنید.');
+                submitButton.disabled = false;
+                submitButton.textContent = 'ثبت سفارش';
                 return;
             }
 
@@ -139,16 +154,19 @@ document.addEventListener('DOMContentLoaded', function() {
             const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
             message += `\nجمع کل: ${total.toLocaleString()} تومان`;
 
-            try {
-                await sendToTelegram(message);
+            const messageSent = await sendToTelegram(message);
+
+            if (messageSent) {
                 alert('سفارش شما با موفقیت ثبت شد. لطفاً منتظر تماس ما باشید.');
                 cart = [];
                 updateCart();
                 form.reset();
-            } catch (error) {
-                console.error('خطا در ارسال پیام:', error);
+            } else {
                 alert('متأسفانه در ثبت سفارش مشکلی پیش آمد. لطفاً دوباره تلاش کنید.');
             }
+
+            submitButton.disabled = false;
+            submitButton.textContent = 'ثبت سفارش';
         });
     }
 });
