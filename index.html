@@ -3,80 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C Code Editor</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.min.css">
-    <style>
-        #editor {
-            height: 500px;
-            width: 100%;
-        }
-        #output {
-            margin-top: 20px;
-            white-space: pre-wrap;
-            border: 1px solid #ddd;
-            padding: 10px;
-            background-color: #f4f4f4;
-            font-family: monospace;
-        }
-    </style>
+    <title>Makatronic Shop - Home</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <h1>Makatronic</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="social-icons">
+                <a href="https://www.instagram.com/makatronic_shop" target="_blank">
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </div>
+        </nav>
+    </header>
 
-<h1>C Code Editor</h1>
-<div id="editor">// Write your C code here</div>
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Welcome to Makatronic Shop</h2>
+                <p>Your destination for quality electronic products</p>
+                <a href="products.html" class="cta-button">View Products</a>
+            </div>
+        </section>
 
-<button onclick="runCode()">Run Code</button>
-<button onclick="downloadCode()">Download Code</button>
+        <section class="featured-products">
+            <h2>Featured Products</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="https://sjc.microlink.io/rLp_XTgvRJlQs0dfcM_MnP_UHsZrG9QvfA58nDPac2tVI35U7Q68zTpQfl6th2Q_N07b2FL4-m_r_v3XtXQu1A.jpeg" alt="Product Image">
+                    <h3>Product Name</h3>
+                    <p>Product description goes here</p>
+                    <a href="products.html" class="product-button">Learn More</a>
+                </div>
+                <!-- Add more product cards as needed -->
+            </div>
+        </section>
+    </main>
 
-<div id="output"></div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
-<script>
-    // Initialize Ace Editor
-    var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/monokai");
-    editor.session.setMode("ace/mode/c_cpp");
-
-    // Function to run the code
-    function runCode() {
-        var code = editor.getValue();
-
-        // Send the code to JDoodle API for execution
-        var data = {
-            script: code,
-            language: "c",
-            versionIndex: "0",
-            clientId: "7986847913d620b3d382f2199ef5f974", // Your JDoodle client ID
-            clientSecret: "cc50ab0bd1598ee10fe34f3c7e7047ad0d7b3614e76ea0e977e6ad2020f8276c" // Your JDoodle client secret
-        };
-
-        fetch('https://api.jdoodle.com/execute', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(result => {
-            // Display the output in the output div
-            document.getElementById('output').innerText = result.output || result.error;
-        })
-        .catch(error => {
-            document.getElementById('output').innerText = 'Error: ' + error.message;
-        });
-    }
-
-    // Function to download the code as a file
-    function downloadCode() {
-        var code = editor.getValue();
-        var blob = new Blob([code], { type: 'text/plain' });
-        var link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'eriscode.c'; // Set the download file name
-        link.click();
-    }
-</script>
-
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p>Email: info@makatronic.com</p>
+                <p>Follow us on Instagram</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Makatronic Shop. All rights reserved.</p>
+        </div>
+    </footer>
 </body>
 </html>
