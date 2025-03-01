@@ -1,45 +1,75 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize animations
-    const elements = document.querySelectorAll('.reveal-text, .reveal-image');
-    elements.forEach(element => {
-        element.style.opacity = '0';
-        element.style.visibility = 'hidden';
-    });
-
-    // Trigger animations
-    setTimeout(() => {
-        elements.forEach(element => {
-            element.style.opacity = '1';
-            element.style.visibility = 'visible';
-        });
-    }, 100);
-
-    // Handle navigation
-    const navLinks = document.querySelectorAll('nav a');
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#  () => {
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
             e.preventDefault();
-            navLinks.forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
+            
+            // Remove active class from all links
+            document.querySelectorAll('nav a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Add active class to clicked link
+            if (this.parentElement.parentElement.tagName === 'NAV') {
+                this.classList.add('active');
+            }
+
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            
+            targetElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
         });
     });
 
-    // Handle contact button
-    const contactBtn = document.querySelector('.contact-btn');
-    contactBtn.addEventListener('click', () => {
-        // Add your contact form logic here
-        console.log('Contact button clicked');
+    // Reveal animations on scroll
+    const observerOptions = {
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.visibility = 'visible';
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal-text, .reveal-image').forEach(el => {
+        el.style.opacity = '0';
+        el.style.visibility = 'hidden';
+        observer.observe(el);
     });
 
-    // Add hover effects for social icons
-    const socialIcons = document.querySelectorAll('.social-icon');
-    socialIcons.forEach(icon => {
-        icon.addEventListener('mouseenter', () => {
-            icon.style.transform = 'translateY(-3px)';
+    // Handle contact form submission
+    const contactForm = document.querySelector('.contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(contactForm);
+            const data = Object.fromEntries(formData);
+            
+            // Here you would typically send the data to your server
+            console.log('Form submitted:', data);
+            
+            // Reset form
+            contactForm.reset();
+            
+            // Show success message
+            alert('Message sent successfully!');
         });
-        
-        icon.addEventListener('mouseleave', () => {
-            icon.style.transform = 'translateY(0)';
-        });
-    });
+    }
+
+    // Initialize page load animations
+    setTimeout(() => {
+        document.body.style.opacity = '1';
+    }, 100);
 });
