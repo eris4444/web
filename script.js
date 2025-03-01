@@ -1,38 +1,45 @@
-// Add smooth scrolling for navigation links
-document.querySelectorAll('nav a').forEach(link => {
-    link.addEventListener('click', (e) => {
-        e.preventDefault();
-        
-        // Remove active class from all links
-        document.querySelectorAll('nav a').forEach(l => l.classList.remove('active'));
-        
-        // Add active class to clicked link
-        link.classList.add('active');
-    });
-});
-
-// Add click handler for contact button
-document.querySelector('.contact-btn').addEventListener('click', () => {
-    // You can add contact form functionality here
-    console.log('Contact button clicked');
-});
-
-// Add hover animation for social icons
-document.querySelectorAll('.social-icon').forEach(icon => {
-    icon.addEventListener('mouseenter', () => {
-        icon.style.transform = 'translateY(-3px)';
-    });
-    
-    icon.addEventListener('mouseleave', () => {
-        icon.style.transform = 'translateY(0)';
-    });
-});
-
-// Add page load animation
 document.addEventListener('DOMContentLoaded', () => {
-    document.body.style.opacity = '0';
+    // Initialize animations
+    const elements = document.querySelectorAll('.reveal-text, .reveal-image');
+    elements.forEach(element => {
+        element.style.opacity = '0';
+        element.style.visibility = 'hidden';
+    });
+
+    // Trigger animations
     setTimeout(() => {
-        document.body.style.transition = 'opacity 0.5s ease';
-        document.body.style.opacity = '1';
+        elements.forEach(element => {
+            element.style.opacity = '1';
+            element.style.visibility = 'visible';
+        });
     }, 100);
+
+    // Handle navigation
+    const navLinks = document.querySelectorAll('nav a');
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            navLinks.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+        });
+    });
+
+    // Handle contact button
+    const contactBtn = document.querySelector('.contact-btn');
+    contactBtn.addEventListener('click', () => {
+        // Add your contact form logic here
+        console.log('Contact button clicked');
+    });
+
+    // Add hover effects for social icons
+    const socialIcons = document.querySelectorAll('.social-icon');
+    socialIcons.forEach(icon => {
+        icon.addEventListener('mouseenter', () => {
+            icon.style.transform = 'translateY(-3px)';
+        });
+        
+        icon.addEventListener('mouseleave', () => {
+            icon.style.transform = 'translateY(0)';
+        });
+    });
 });
