@@ -1,7 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Smooth scrolling for navigation links
-    document.querySelectorAll('a[href^="#  () => {
-    // Smooth scrolling for navigation links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
@@ -12,17 +10,42 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             // Add active class to clicked link
-            if (this.parentElement.parentElement.tagName === 'NAV') {
-                this.classList.add('active');
-            }
+            this.classList.add('active');
 
             const targetId = this.getAttribute('href');
             const targetElement = document.querySelector(targetId);
             
-            targetElement.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
+            // Account for fixed header height
+            const headerHeight = document.querySelector('header').offsetHeight;
+            const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+            
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
             });
+        });
+    });
+
+    // Update active menu item on scroll
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('nav a');
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        const headerHeight = document.querySelector('header').offsetHeight;
+
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - headerHeight - 100;
+            if (window.pageYOffset >= sectionTop) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) {
+                link.classList.add('active');
+            }
         });
     });
 
@@ -46,27 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
         el.style.visibility = 'hidden';
         observer.observe(el);
     });
-
-    // Handle contact form submission
-    const contactForm = document.querySelector('.contact-form');
-    if (contactForm) {
-        contactForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            // Get form data
-            const formData = new FormData(contactForm);
-            const data = Object.fromEntries(formData);
-            
-            // Here you would typically send the data to your server
-            console.log('Form submitted:', data);
-            
-            // Reset form
-            contactForm.reset();
-            
-            // Show success message
-            alert('Message sent successfully!');
-        });
-    }
 
     // Initialize page load animations
     setTimeout(() => {
