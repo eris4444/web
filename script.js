@@ -1,20 +1,10 @@
+// Initialize AOS
+AOS.init({
+    duration: 1000,
+    once: true
+});
+
 // Particle.js Configuration
-// Assuming particlesJS is a global function provided by the particles.js library
-// If not, you need to import it or include the library in your HTML
-
-// Example of how to import if using a module bundler (like webpack, parcel, etc.)
-// import particlesJS from 'particles.js';
-
-// If you're not using a module bundler, ensure particles.js is included in your HTML
-// via a <script> tag before this script.js file.
-
-// Declare particlesJS if it's not already globally available
-if (typeof particlesJS === 'undefined') {
-    window.particlesJS = function(tagId, config) {
-        console.warn('particlesJS is not defined. Make sure to include the particles.js library.');
-    };
-}
-
 particlesJS('particles-js', {
     particles: {
         number: {
@@ -79,7 +69,7 @@ const cursorFollower = document.querySelector('.cursor-follower');
 document.addEventListener('mousemove', (e) => {
     cursor.style.left = e.clientX + 'px';
     cursor.style.top = e.clientY + 'px';
-    
+
     setTimeout(() => {
         cursorFollower.style.left = e.clientX + 'px';
         cursorFollower.style.top = e.clientY + 'px';
@@ -136,7 +126,6 @@ card.addEventListener('mouseleave', () => {
 });
 
 // Typing Effect
-const Typed = require('typed.js'); // Import Typed.js or declare it globally
 new Typed('#typed', {
     strings: [
         'Building Digital Solutions',
@@ -209,19 +198,4 @@ document.querySelector('.cta-buttons .primary-btn').addEventListener('click', ()
 
 document.querySelector('.cta-buttons .secondary-btn').addEventListener('click', () => {
     document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
-});
-
-// Profile Image Upload
-const profileUpload = document.getElementById('profile-upload');
-const profileImage = document.getElementById('profile-image');
-
-profileUpload.addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            profileImage.src = e.target.result;
-        }
-        reader.readAsDataURL(file);
-    }
 });
