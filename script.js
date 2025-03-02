@@ -1,7 +1,59 @@
-// Initialize AOS (Animate On Scroll)
-AOS.init({
-    duration: 1000,
-    once: true
+// Particle.js Configuration
+particlesJS('particles-js', {
+    particles: {
+        number: {
+            value: 80,
+            density: {
+                enable: true,
+                value_area: 800
+            }
+        },
+        color: {
+            value: '#4facfe'
+        },
+        shape: {
+            type: 'circle'
+        },
+        opacity: {
+            value: 0.5,
+            random: false
+        },
+        size: {
+            value: 3,
+            random: true
+        },
+        line_linked: {
+            enable: true,
+            distance: 150,
+            color: '#4facfe',
+            opacity: 0.2,
+            width: 1
+        },
+        move: {
+            enable: true,
+            speed: 2,
+            direction: 'none',
+            random: false,
+            straight: false,
+            out_mode: 'out',
+            bounce: false
+        }
+    },
+    interactivity: {
+        detect_on: 'canvas',
+        events: {
+            onhover: {
+                enable: true,
+                mode: 'grab'
+            },
+            onclick: {
+                enable: true,
+                mode: 'push'
+            },
+            resize: true
+        }
+    },
+    retina_detect: true
 });
 
 // Custom Cursor
@@ -31,15 +83,54 @@ document.querySelectorAll('a, button').forEach(element => {
     });
 });
 
-// Loading Screen
-window.addEventListener('load', () => {
-    const loader = document.querySelector('.loader');
-    setTimeout(() => {
-        loader.style.opacity = '0';
-        setTimeout(() => {
-            loader.style.display = 'none';
-        }, 500);
-    }, 2000);
+// 3D Card Effect
+const card = document.querySelector('.card-3d');
+let bounds;
+
+function rotateElement(e) {
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
+    const leftX = mouseX - bounds.x;
+    const topY = mouseY - bounds.y;
+    const center = {
+        x: leftX - bounds.width / 2,
+        y: topY - bounds.height / 2
+    };
+    const distance = Math.sqrt(center.x ** 2 + center.y ** 2);
+
+    card.style.transform = `
+        rotate3d(
+            ${center.y / 100},
+            ${-center.x / 100},
+            0,
+            ${Math.log(distance) * 2}deg
+        )
+    `;
+}
+
+card.addEventListener('mouseenter', () => {
+    bounds = card.getBoundingClientRect();
+    document.addEventListener('mousemove', rotateElement);
+});
+
+card.addEventListener('mouseleave', () => {
+    document.removeEventListener('mousemove', rotateElement);
+    card.style.transform = '';
+    card.style.background = '';
+});
+
+// Typing Effect
+const Typed = require('typed.js'); // Import Typed.js or declare it globally
+new Typed('#typed', {
+    strings: [
+        'Building Digital Solutions',
+        'Creating User Experiences',
+        'Developing Modern Websites'
+    ],
+    typeSpeed: 50,
+    backSpeed: 30,
+    backDelay: 1500,
+    loop: true
 });
 
 // Smooth Scroll
@@ -52,94 +143,45 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Active Navigation Link
-const sections = document.querySelectorAll('section');
-const navLinks = document.querySelectorAll('.nav-links a');
-
-window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
-        if (pageYOffset >= sectionTop - sectionHeight / 3) {
-            current = section.getAttribute('id');
-        }
-    });
-
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href').slice(1) === current) {
-            link.classList.add('active');
-        }
-    });
-});
-
-// Parallax Effect
-document.addEventListener('mousemove', parallax);
-
-function parallax(e) {
-    document.querySelectorAll('.parallax').forEach(element => {
-        const speed = element.getAttribute('data-speed');
-        const x = (window.innerWidth - e.pageX * speed) / 100;
-        const y = (window.innerHeight - e.pageY * speed) / 100;
-        element.style.transform = `translateX(${x}px) translateY(${y}px)`;
-    });
-}
-
-// Skill Bars Animation
-const skillBars = document.querySelectorAll('.skill-progress');
-const animateSkills = () => {
-    skillBars.forEach(bar => {
-        const target = bar.getAttribute('style').match(/width: (\d+)%/)[1];
-        bar.style.width = '0%';
+// Loading Animation
+window.addEventListener('load', () => {
+    const loader = document.querySelector('.loader');
+    setTimeout(() => {
+        loader.style.opacity = '0';
         setTimeout(() => {
-            bar.style.width = target + '%';
-        }, 100);
-    });
-};
-
-// Trigger skill animation when section is in view
-const skillsSection = document.querySelector('.skills');
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            animateSkills();
-            observer.unobserve(entry.target);
-        }
-    });
+            loader.style.display = 'none';
+        }, 500);
+    }, 2000);
 });
 
-if (skillsSection) {
-    observer.observe(skillsSection);
+// Glitch Effect
+function glitchText() {
+    const glitchTexts = document.querySelectorAll('.glitch-text');
+    glitchTexts.forEach(text => {
+        let originalText = text.textContent;
+        let glitchInterval;
+
+        text.addEventListener('mouseenter', () => {
+            glitchInterval = setInterval(() => {
+                text.textContent = originalText
+                    .split('')
+                    .map((char, i) => {
+                        if (Math.random() < 0.1) {
+                            return String.fromCharCode(
+                                33 + Math.floor(Math.random() * 94)
+                            );
+                        }
+                        return char;
+                    })
+                    .join('');
+            }, 50);
+        });
+
+        text.addEventListener('mouseleave', () => {
+            clearInterval(glitchInterval);
+            text.textContent = originalText;
+        });
+    });
 }
 
-// Dynamic Text Effect
-const dynamicText = document.querySelector('.gradient-text');
-if (dynamicText) {
-    const words = ['Developer', 'Designer', 'Creator'];
-    let wordIndex = 0;
-    let charIndex = 0;
-    let isDeleting = false;
-
-    const typeEffect = () => {
-        const currentWord = words[wordIndex];
-        const currentChar = currentWord.substring(0, charIndex);
-        dynamicText.textContent = currentChar;
-
-        if (!isDeleting && charIndex < currentWord.length) {
-            charIndex++;
-            setTimeout(typeEffect, 200);
-        } else if (isDeleting && charIndex > 0) {
-            charIndex--;
-            setTimeout(typeEffect, 100);
-        } else {
-            isDeleting = !isDeleting;
-            if (!isDeleting) {
-                wordIndex = (wordIndex + 1) % words.length;
-            }
-            setTimeout(typeEffect, 1200);
-        }
-    };
-
-    typeEffect();
-}
+glitchText();
