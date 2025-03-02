@@ -1,4 +1,13 @@
 // Particle.js Configuration
+// Assuming particlesJS is a global function provided by the particles.js library
+// If not, you need to import it or include the library in your HTML
+
+// Example of how to import if using a module bundler (like webpack, parcel, etc.)
+// import particlesJS from 'particles.js';
+
+// If you're not using a module bundler, ensure particles.js is included in your HTML
+// via a <script> tag before this script.js file.
+
 particlesJS('particles-js', {
     particles: {
         number: {
@@ -185,3 +194,12 @@ function glitchText() {
 }
 
 glitchText();
+
+// Update the hero buttons
+document.querySelector('.cta-buttons .primary-btn').addEventListener('click', () => {
+    document.querySelector('#work').scrollIntoView({ behavior: 'smooth' });
+});
+
+document.querySelector('.cta-buttons .secondary-btn').addEventListener('click', () => {
+    document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
+});
