@@ -8,6 +8,13 @@
 // If you're not using a module bundler, ensure particles.js is included in your HTML
 // via a <script> tag before this script.js file.
 
+// Declare particlesJS if it's not already globally available
+if (typeof particlesJS === 'undefined') {
+    window.particlesJS = function(tagId, config) {
+        console.warn('particlesJS is not defined. Make sure to include the particles.js library.');
+    };
+}
+
 particlesJS('particles-js', {
     particles: {
         number: {
@@ -202,4 +209,19 @@ document.querySelector('.cta-buttons .primary-btn').addEventListener('click', ()
 
 document.querySelector('.cta-buttons .secondary-btn').addEventListener('click', () => {
     document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
+});
+
+// Profile Image Upload
+const profileUpload = document.getElementById('profile-upload');
+const profileImage = document.getElementById('profile-image');
+
+profileUpload.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            profileImage.src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
 });
